@@ -1,10 +1,12 @@
 import { useState, type FC } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Box, Button, TextField, Typography } from '@mui/material'
 import { useAuth } from '../router/AuthContext'
 import { addUserItem, getUserItems } from '../lib/api/user'
 
 export const SigninPage: FC = () => {
   const { login } = useAuth()
+  const navigate = useNavigate()
   const [name, setName] = useState('')
   const [error, setError] = useState('')
 
@@ -22,6 +24,7 @@ export const SigninPage: FC = () => {
     }
 
     login(trimmed)
+    navigate('/')
   }
 
   return (
