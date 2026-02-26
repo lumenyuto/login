@@ -44,11 +44,9 @@ export const HomePage: FC = () => {
         <Box sx={{ flex: 1, display: { xs: 'none', sm: 'block' } }} />
 
         <Typography
-          variant="h6"
+          variant="h1"
           component="h1"
           sx={{
-            fontWeight: 700,
-            letterSpacing: '.1rem',
             textAlign: 'center',
             flex: 1,
           }}
