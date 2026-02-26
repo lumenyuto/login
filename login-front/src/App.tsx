@@ -1,34 +1,85 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState, type FC } from 'react'
+import { ThemeProvider, createTheme } from '@mui/material'
+import { Box, Button, Stack, Typography} from '@mui/material'
+import CssBaseline from '@mui/material/CssBaseline'
+import type { NewUserPayload, User } from './types/user'
+import {
+  addUserItem,
+  getUserItems,
+} from './lib/api/user'
+import { AuthProvider, useAuth } from './contexts/AuthContext'
+import { SigninPage } from './components/SigninPage'
 
-function App() {
-  const [count, setCount] = useState(0)
+const MyApp: FC = () => {
+  const { authUser, logout } = useAuth()
+  const [users, setUsers] = useState<User []>([])
+
+  const onSubmit = async (payload: NewUserPayload) => {
+    if (!payload.name) return 
+    await addUserItem(payload)
+    const users = await getUserItems()
+    setUsers(users)
+  }
+
+  useEffect(() => {
+    ;(async () => {
+      const users = await getUserItems()
+      setUsers(users)
+    }) ()
+  }, [])
+
+  if (!authUser) {
+    return <SigninPage />
+  }
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Box
+        sx={{
+          backgroundColor: 'white',
+          borderBottom: '1px solid gray',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          position: 'fixed',
+          top: 0,
+          p: 2,
+          width: '100%',
+          height: 80,
+          zIndex: 3,
+        }}
+      >
+        <Typography variant="h1">My App</Typography>
+        <Stack direction="row" alignItems="center" gap={2} sx={{ pr: 4 }}>
+          <Typography variant="body1">{authUser.name} さん</Typography>
+          <Button variant="outlined" size="small" onClick={logout}>
+            ログアウト
+          </Button>
+        </Stack>
+      </Box>
     </>
+  )
+}
+
+const theme = createTheme({
+  typography: {
+    h1: {
+      fontSize: 30,
+    },
+    h2: {
+      fontSize: 20,
+    },
+  },
+})
+
+const App: FC = () => {
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <AuthProvider>
+        <MyApp />
+      </AuthProvider>
+    </ThemeProvider>
   )
 }
 
