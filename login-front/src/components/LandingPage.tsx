@@ -18,10 +18,7 @@ export const LandingPage: FC = () => {
       }}
     >
       <Typography variant="h2" fontWeight="bold">
-        Todoアプリへようこそ
-      </Typography>
-      <Typography variant="h6" color="text.secondary">
-        このソフトウェアを使えば、あなたのタスク管理が劇的に変わります。
+        Welcome to My App!
       </Typography>
       
       <Button 
