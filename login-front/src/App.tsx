@@ -7,7 +7,7 @@ import {
   addUserItem,
   getUserItems,
 } from './lib/api/user'
-import { AuthProvider, useAuth } from './contexts/AuthContext'
+import { AuthProvider, useAuth } from './router/AuthContext'
 import { SigninPage } from './components/SigninPage'
 
 const MyApp: FC = () => {

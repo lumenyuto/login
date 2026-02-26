@@ -1,6 +1,6 @@
 import { useState, type FC } from 'react'
 import { Box, Button, TextField, Typography } from '@mui/material'
-import { useAuth } from '../contexts/AuthContext'
+import { useAuth } from '../router/AuthContext'
 import { addUserItem, getUserItems } from '../lib/api/user'
 
 export const SigninPage: FC = () => {
