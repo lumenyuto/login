@@ -14,7 +14,7 @@ const Router = () => {
         path="/"
         element={
           authUser 
-            ? <Navigate to={`/${authUser.name}`} replace /> 
+            ? <Navigate to="/home" replace /> 
             : <Navigate to="/signin" replace />
         }
       />
@@ -29,7 +29,7 @@ const Router = () => {
       />
 
       <Route 
-        path="/:username"
+        path="/home"
         element={
           <PrivateRouter>
             <HomePage />
