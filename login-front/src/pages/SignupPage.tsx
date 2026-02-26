@@ -2,15 +2,15 @@ import { useState, type FC } from 'react'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
 import { Box, Button, Link, TextField, Typography } from '@mui/material'
 import { useAuth } from '../router/AuthContext'
-import { getUserItems } from '../api/user'
+import { addUserItem, getUserItems } from '../api/user'
 
-export const SigninPage: FC = () => {
+export const SignupPage: FC = () => {
   const { login } = useAuth()
   const navigate = useNavigate()
   const [name, setName] = useState('')
   const [error, setError] = useState('')
 
-  const handleSignin = async () => {
+  const handleSignup = async () => {
     const trimmed = name.trim()
     if (!trimmed) {
       setError('ユーザー名を入力してください')
@@ -19,10 +19,13 @@ export const SigninPage: FC = () => {
 
     const users = await getUserItems()
     const exist_user = users.find((u) => u.name === trimmed)
-    if (!exist_user) {
-      setError('ユーザー名が間違っています')
-      return
+    
+    if (exist_user) {
+        setError('そのユーザー名はすでに使用されています。')
+        return
     }
+
+    await addUserItem({ name: trimmed})
 
     login(trimmed)
     navigate('/')
@@ -42,7 +45,7 @@ export const SigninPage: FC = () => {
     >
       <Typography variant="h1">My App</Typography>
       <Typography variant="h2" color="text.secondary">
-        サインイン
+        新規登録
       </Typography>
       <TextField
         label="ユーザー名"
@@ -51,23 +54,23 @@ export const SigninPage: FC = () => {
           setName(e.target.value)
           setError('')
         }}
-        onKeyDown={(e) => e.key === 'Enter' && handleSignin()}
+        onKeyDown={(e) => e.key === 'Enter' && handleSignup()}
         error={!!error}
         helperText={error}
         sx={{ width: 300 }}
       />
-      <Button variant="contained" onClick={handleSignin} sx={{ width: 300 }}>
-        ログイン
+      <Button variant="contained" onClick={handleSignup} sx={{ width: 300 }}>
+        登録する
       </Button>
       <Typography
         variant="body2"
         color="text.secondary"
         sx={{ mt: 2}}
       >
-        アカウントを持っていない場合は
+        もしアカウントを持っている場合は
         <Link
           component={RouterLink}
-          to="/signup"
+          to="/signin"
           sx={{
             color: 'primary.main',
             textDecoration: 'none',
@@ -75,7 +78,7 @@ export const SigninPage: FC = () => {
             '&:hover': { textDecoration: 'underline' }
           }}
         >
-          新規登録
+          サインイン
         </Link>
         から。
       </Typography>

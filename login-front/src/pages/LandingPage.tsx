@@ -17,7 +17,7 @@ export const LandingPage: FC = () => {
         gap: 4,
       }}
     >
-      <Typography variant="h2" fontWeight="bold">
+      <Typography variant="h1">
         Welcome to My App!
       </Typography>
       
@@ -26,7 +26,14 @@ export const LandingPage: FC = () => {
         size="large" 
         onClick={() => navigate('/signin')}
       >
-        ログインして始める
+        サインイン
+      </Button>
+      <Button
+        variant="contained"
+        size="large"
+        onClick={() => navigate('signup')}
+      >
+        新規登録
       </Button>
     </Box>
   )

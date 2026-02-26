@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router-dom'
 import { HomePage } from '../pages/HomePage'
 import { LandingPage } from '../pages/LandingPage'
 import { SigninPage } from '../pages/SigninPage'
+import { SignupPage } from '../pages/SignupPage'
 import { useAuth } from './AuthContext'
 import { PrivateRouter } from './PrivateRouter'
 import { GuestRouter } from './GuestRouter'
@@ -25,6 +26,16 @@ const Router = () => {
           </GuestRouter>
         }
       />
+      
+      <Route
+        path="/signup"
+        element={
+          <GuestRouter>
+            <SignupPage />
+          </GuestRouter>
+        }
+      />
+      
       <Route
         path="/todos"
         element={

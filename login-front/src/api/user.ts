@@ -1,4 +1,4 @@
-import type { NewUserPayload, User } from'../../types/user'
+import type { NewUserPayload, User } from'../types/user'
 
 export const addUserItem = async (payload: NewUserPayload) => {
     const res = await fetch('http://localhost:4000/users', {

@@ -1,7 +1,7 @@
 import { useState, useEffect, type FC } from 'react'
 import { Box, Button, Stack, Typography } from '@mui/material'
 import { useAuth } from '../router/AuthContext'
-import { addUserItem, getUserItems } from '../lib/api/user'
+import { addUserItem, getUserItems } from '../api/user'
 import type { NewUserPayload, User } from '../types/user'
 
 export const HomePage: FC = () => {
