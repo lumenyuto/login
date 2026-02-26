@@ -35,25 +35,55 @@ const MyApp: FC = () => {
   return (
     <>
       <Box
+        component="header"
         sx={{
           backgroundColor: 'white',
-          borderBottom: '1px solid gray',
+          borderBottom: '1px solid',
+          borderColor: 'divider',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'center',
+          justifyContent: 'space-between',
           position: 'fixed',
           top: 0,
-          p: 2,
+          left: 0,
           width: '100%',
-          height: 80,
-          zIndex: 3,
+          height: 64,
+          px: 3,
+          boxSizing: 'border-box',
         }}
       >
-        <Typography variant="h1">My App</Typography>
-        <Stack direction="row" alignItems="center" gap={2} sx={{ pr: 4 }}>
-          <Typography variant="body1">{authUser.name} さん</Typography>
-          <Button variant="outlined" size="small" onClick={logout}>
-            ログアウト
+        <Box sx={{ flex: 1, display: { xs: 'none', sm: 'block' } }} />
+
+        <Typography
+          variant="h6"
+          component="h1"
+          sx={{
+            fontWeight: 700,
+            letterSpacing: '.1rem',
+            textAlign: 'center',
+            flex: 1,
+          }}
+        >
+          MY APP
+        </Typography>
+
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="flex-end"
+          gap={2}
+          sx={{ flex: 1 }}
+        >
+          <Typography variant="body2" color="text.secondary" sx={{ display: { xs: 'none', md: 'block' } }}>
+            {authUser.name} さん
+          </Typography>
+          <Button 
+            variant="outlined" 
+            size="small" 
+            onClick={logout}
+            sx={{ borderRadius: '20px', textTransform: 'none' }}
+          >
+            Logout
           </Button>
         </Stack>
       </Box>
