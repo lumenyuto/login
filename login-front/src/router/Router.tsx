@@ -1,21 +1,18 @@
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 import { SigninPage } from '../components/SigninPage'
 import { HomePage } from '../components/HomePage'
 import { PrivateRouter } from './PrivateRouter'
 import { PublicRouter } from './PublicRouter'
-import { useAuth } from './AuthContext'
 
 const Router = () => {
-  const { authUser } = useAuth()
-
   return (
     <Routes>
       <Route 
         path="/"
         element={
-          authUser 
-            ? <Navigate to="/home" replace /> 
-            : <Navigate to="/signin" replace />
+          <PrivateRouter>
+            <HomePage />
+          </PrivateRouter>
         }
       />
 
@@ -25,15 +22,6 @@ const Router = () => {
           <PublicRouter>
             <SigninPage />
           </PublicRouter>
-        }
-      />
-
-      <Route 
-        path="/home"
-        element={
-          <PrivateRouter>
-            <HomePage />
-          </PrivateRouter>
         }
       />
       <Route path="*" element={<>PAGE NOT FOUND 404</>} />

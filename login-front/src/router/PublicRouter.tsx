@@ -6,7 +6,7 @@ export const PublicRouter: FC<{children: ReactNode}> = ({ children }) => {
   const { authUser } = useAuth();
 
   if (authUser) {
-    return <Navigate to="/home" replace />
+    return <Navigate to="/" replace />
   }
   return <>{children}</>
 }
