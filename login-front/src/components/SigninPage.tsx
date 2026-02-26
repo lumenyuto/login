@@ -8,7 +8,7 @@ export const SigninPage: FC = () => {
   const [name, setName] = useState('')
   const [error, setError] = useState('')
 
-  const handleLogin = async () => {
+  const handleSignin = async () => {
     const trimmed = name.trim()
     if (!trimmed) {
       setError('名前を入力してください')
@@ -38,7 +38,7 @@ export const SigninPage: FC = () => {
     >
       <Typography variant="h1">My App</Typography>
       <Typography variant="h2" color="text.secondary">
-        名前を入力してログイン
+        名前を入力してサインイン
       </Typography>
       <TextField
         label="名前"
@@ -47,12 +47,12 @@ export const SigninPage: FC = () => {
           setName(e.target.value)
           setError('')
         }}
-        onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
+        onKeyDown={(e) => e.key === 'Enter' && handleSignin()}
         error={!!error}
         helperText={error}
         sx={{ width: 300 }}
       />
-      <Button variant="contained" onClick={handleLogin} sx={{ width: 300 }}>
+      <Button variant="contained" onClick={handleSignin} sx={{ width: 300 }}>
         ログイン
       </Button>
     </Box>

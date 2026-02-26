@@ -13,14 +13,23 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | null>(null)
 
 export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [authUser, setAuthUser] = useState<AuthUser | null>(null)
+  const [authUser, setAuthUser] = useState<AuthUser | null>(() => {
+    const saved = localStorage.getItem('authUser')
+    if (saved) {
+      return JSON.parse(saved)
+    }
+    return null
+  })
 
   const login = (name: string) => {
-    setAuthUser({ name })
+    const user = { name }
+    setAuthUser(user)
+    localStorage.setItem('authUser', JSON.stringify(user))
   }
 
   const logout = () => {
     setAuthUser(null)
+    localStorage.removeItem('authUser')
   }
 
   return (
