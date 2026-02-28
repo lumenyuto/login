@@ -1,9 +1,9 @@
 import type { FC } from 'react'
 import { Box, Typography, Button } from '@mui/material'
-import { useNavigate } from 'react-router-dom'
+import { useAuth0 } from '@auth0/auth0-react'
 
 export const LandingPage: FC = () => {
-  const navigate = useNavigate()
+  const { loginWithRedirect } = useAuth0()
 
   return (
     <Box
@@ -23,15 +23,19 @@ export const LandingPage: FC = () => {
       
       <Button 
         variant="contained" 
-        size="large" 
-        onClick={() => navigate('/signin')}
+        size="large"
+        onClick={() => loginWithRedirect()}
       >
         サインイン
       </Button>
       <Button
         variant="contained"
         size="large"
-        onClick={() => navigate('signup')}
+        onClick={() => loginWithRedirect({
+          authorizationParams: {
+            screen_hint: 'signup',
+          }
+        })}
       >
         新規登録
       </Button>

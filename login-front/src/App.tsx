@@ -1,9 +1,8 @@
-import {type FC } from 'react'
+import { type FC } from 'react'
 import { BrowserRouter } from 'react-router-dom'
 import { ThemeProvider, createTheme } from '@mui/material'
 import CssBaseline from '@mui/material/CssBaseline'
-import { AuthProvider } from './router/AuthContext'
-import  Router  from './router/Router'
+import Router from './router/Router'
 
 const theme = createTheme({
   typography: {
@@ -20,11 +19,9 @@ const App: FC = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <AuthProvider>
-        <BrowserRouter>
-          <Router />
-        </BrowserRouter>
-      </AuthProvider>
+      <BrowserRouter>
+        <Router />
+      </BrowserRouter>
     </ThemeProvider>
   )
 }

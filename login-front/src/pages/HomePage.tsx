@@ -1,12 +1,12 @@
 import { useState, useEffect, type FC } from 'react'
+import { useAuth0 } from '@auth0/auth0-react'
 import { Box, Button, Stack, Typography } from '@mui/material'
-import { useAuth } from '../router/AuthContext'
 import { addUserItem, getUserItems } from '../api/user'
 import type { NewUserPayload, User } from '../types/user'
 
 export const HomePage: FC = () => {
-  const { authUser, logout } = useAuth()
-  const [users, setUsers] = useState<User []>([])
+  const { user, isAuthenticated, isLoading, logout } = useAuth0()
+  const [users, setUsers] = useState<User[]>([])
 
   const onSubmit = async (payload: NewUserPayload) => {
     if (!payload.name) return 
@@ -19,10 +19,14 @@ export const HomePage: FC = () => {
     ;(async () => {
       const users = await getUserItems()
       setUsers(users)
-    }) ()
+    })()
   }, [])
 
-  if (!authUser) return null
+  if (isLoading) {
+    return <div>Loading</div>
+  }
+
+  if (!isAuthenticated || !user) return null
 
   return (
     <>
@@ -51,7 +55,7 @@ export const HomePage: FC = () => {
             flex: 1,
           }}
         >
-          MY APP
+          My App
         </Typography>
 
         <Stack
@@ -62,12 +66,12 @@ export const HomePage: FC = () => {
           sx={{ flex: 1 }}
         >
           <Typography variant="body2" color="text.secondary" sx={{ display: { xs: 'none', md: 'block' } }}>
-            {authUser.name} さん
+            {user.name} さん
           </Typography>
           <Button 
             variant="outlined" 
             size="small" 
-            onClick={logout}
+            onClick={() => logout({ logoutParams: { returnTo: window.location.origin } })}
             sx={{ borderRadius: '20px', textTransform: 'none' }}
           >
             Logout

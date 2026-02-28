@@ -1,49 +1,34 @@
 import { Route, Routes } from 'react-router-dom'
+import { useAuth0 } from '@auth0/auth0-react'
 import { HomePage } from '../pages/HomePage'
 import { LandingPage } from '../pages/LandingPage'
-import { SigninPage } from '../pages/SigninPage'
-import { SignupPage } from '../pages/SignupPage'
-import { useAuth } from './AuthContext'
-import { PrivateRouter } from './PrivateRouter'
-import { GuestRouter } from './GuestRouter'
+import { PrivateRoute } from './PrivateRoute'
 
 const Router = () => {
-  const { authUser } = useAuth()
+  const { isAuthenticated, isLoading } = useAuth0()
+
+  if (isLoading) {
+    return <div>Loading...</div>
+  }
+
   return (
     <Routes>
       <Route 
         path="/"
         element={
-          authUser ? <HomePage /> : <LandingPage />
+          isAuthenticated ? <HomePage /> : <LandingPage />
+        }
+      /> 
+
+      <Route 
+        path="/todos"
+        element={
+          <PrivateRoute>
+            <div>todos</div>
+          </PrivateRoute>
         }
       />
 
-      <Route
-        path="/signin"
-        element={
-          <GuestRouter>
-            <SigninPage />
-          </GuestRouter>
-        }
-      />
-      
-      <Route
-        path="/signup"
-        element={
-          <GuestRouter>
-            <SignupPage />
-          </GuestRouter>
-        }
-      />
-      
-      <Route
-        path="/todos"
-        element={
-          <PrivateRouter>
-            <HomePage />
-          </PrivateRouter>
-        }
-      />  
       <Route path="*" element={<>PAGE NOT FOUND 404</>} />
     </Routes>
   )
