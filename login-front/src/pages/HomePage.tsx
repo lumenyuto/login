@@ -5,22 +5,25 @@ import { addUserItem, getUserItems } from '../api/user'
 import type { NewUserPayload, User } from '../types/user'
 
 export const HomePage: FC = () => {
-  const { user, isAuthenticated, isLoading, logout } = useAuth0()
+  const { user, isAuthenticated, isLoading, getAccessTokenSilently, logout } = useAuth0()
   const [users, setUsers] = useState<User[]>([])
 
   const onSubmit = async (payload: NewUserPayload) => {
-    if (!payload.name) return 
-    await addUserItem(payload)
-    const users = await getUserItems()
+    if (!payload.name) return
+    const token = await getAccessTokenSilently()
+    await addUserItem(payload, token)
+    const users = await getUserItems(token)
     setUsers(users)
   }
 
   useEffect(() => {
     ;(async () => {
-      const users = await getUserItems()
+      if (!isAuthenticated) return
+      const token = await getAccessTokenSilently()
+      const users = await getUserItems(token)
       setUsers(users)
     })()
-  }, [])
+  }, [isAuthenticated, getAccessTokenSilently])
 
   if (isLoading) {
     return <div>Loading</div>
