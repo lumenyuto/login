@@ -6,20 +6,16 @@ use serde::{Deserialize, Serialize};
 pub struct User {
     pub id: i32,
     pub name: String,
+    pub sub: Option<String>,
+    pub email: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, Validate)]
 pub struct CreateUser {
     #[validate(length(min = 1, message = "Can not be empty"))]
-    #[validate(length(max = 100, message = "Over text length"))]
+    pub sub: String,
+    #[validate(length(min = 1, message = "Can not be empty"))]
     pub name: String,
-}
-
-impl User {
-    pub fn new(id: i32, name: String) -> Self {
-        Self {
-            id,
-            name,
-        }
-    }
+    #[validate(length(min = 1, message = "Can not be empty"))]
+    pub email: String,
 }

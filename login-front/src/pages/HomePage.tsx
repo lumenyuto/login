@@ -1,29 +1,29 @@
 import { useState, useEffect, type FC } from 'react'
 import { useAuth0 } from '@auth0/auth0-react'
 import { Box, Button, Stack, Typography } from '@mui/material'
-import { addUserItem, getUserItems } from '../api/user'
-import type { NewUserPayload, User } from '../types/user'
+import { createUser, getUserItems } from '../api/user'
+import type { User } from '../types/user'
 
 export const HomePage: FC = () => {
   const { user, isAuthenticated, isLoading, getAccessTokenSilently, logout } = useAuth0()
   const [users, setUsers] = useState<User[]>([])
 
-  const onSubmit = async (payload: NewUserPayload) => {
-    if (!payload.name) return
-    const token = await getAccessTokenSilently()
-    await addUserItem(payload, token)
-    const users = await getUserItems(token)
-    setUsers(users)
-  }
-
   useEffect(() => {
     ;(async () => {
-      if (!isAuthenticated) return
+      if (!isAuthenticated || !user) return
       const token = await getAccessTokenSilently()
+      await createUser(
+        {
+          sub: user.sub!,
+          name: user.name ?? '',
+          email: user.email ?? '',
+        },
+        token,
+      )
       const users = await getUserItems(token)
       setUsers(users)
     })()
-  }, [isAuthenticated, getAccessTokenSilently])
+  }, [isAuthenticated, getAccessTokenSilently, user])
 
   if (isLoading) {
     return <div>Loading</div>

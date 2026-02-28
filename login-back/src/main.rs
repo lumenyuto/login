@@ -1,3 +1,4 @@
+mod auth;
 mod handlers;
 mod models;
 mod repositories;
@@ -12,7 +13,7 @@ use std::{
     env,
     sync::Arc
 };
-use hyper::header::CONTENT_TYPE;
+use hyper::header::{AUTHORIZATION, CONTENT_TYPE};
 use sqlx::PgPool;
 use tower_http::cors::{Any, CorsLayer, Origin};
 use dotenv::dotenv;
@@ -56,7 +57,7 @@ async fn main() {
                 CorsLayer::new()
                     .allow_origin(Origin::exact("http://localhost:4001".parse().unwrap()))
                     .allow_methods(Any)
-                    .allow_headers(vec![CONTENT_TYPE]),
+                    .allow_headers(vec![CONTENT_TYPE, AUTHORIZATION]),
             )
     }
 }
