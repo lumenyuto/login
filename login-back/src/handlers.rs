@@ -1,8 +1,7 @@
 pub mod user;
 
 use axum::{
-    async_trait,
-    extract::{FromRequest, RequestParts},
+    extract::{FromRequest, Request},
     http::StatusCode,
     BoxError, Json,
 };
@@ -12,18 +11,16 @@ use validator::Validate;
 #[derive(Debug)]
 pub struct ValidatedJson<T>(T);
 
-#[async_trait]
-impl <T, B> FromRequest<B> for ValidatedJson<T>
+impl <T, S> FromRequest<S> for ValidatedJson<T>
 where
     T: DeserializeOwned + Validate,
-    B: http_body::Body + Send,
-    B::Data: Send,
-    B::Error: Into<BoxError>,
+    S: Send + Sync,
 {
     type Rejection = (StatusCode, String);
 
-    async fn from_request(req: &mut RequestParts<B>) -> Result<Self, Self::Rejection> {
-        let Json(value) = Json::<T>::from_request(req).await.map_err(|rejection| {
+    async fn from_request(req: Request, state: &S
+    ) -> Result<Self, Self::Rejection> {
+        let Json(value) = Json::<T>::from_request(req, state).await.map_err(|rejection| {
             let message = format!("Json parse error: [{}]", rejection);
             (StatusCode::BAD_REQUEST, message)
         })?;

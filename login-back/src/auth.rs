@@ -1,12 +1,11 @@
 use axum::{
-    async_trait,
-    extract::{FromRequest, RequestParts},
-    http::StatusCode,
+    extract::FromRequestParts,
+    http::{StatusCode, request::Parts},
 };
 use jsonwebtoken::{decode, decode_header, Algorithm, DecodingKey, Validation};
-use once_cell::sync::OnceCell;
 use serde::{Deserialize, Serialize};
 use std::env;
+use std::sync::OnceLock;
 use tokio::sync::RwLock;
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -34,7 +33,7 @@ struct Jwk {
     e: String,
 }
 
-static JWKS_CACHE: OnceCell<RwLock<Vec<Jwk>>> = OnceCell::new();
+static JWKS_CACHE: OnceLock<RwLock<Vec<Jwk>>> = OnceLock::new();
 
 fn get_jwks_cache() -> &'static RwLock<Vec<Jwk>> {
     JWKS_CACHE.get_or_init(|| RwLock::new(Vec::new()))
@@ -79,19 +78,23 @@ async fn get_decoding_key(domain: &str, kid: &str) -> Result<DecodingKey, Status
     Ok(decoding_key)
 }
 
-#[async_trait]
-impl<B> FromRequest<B> for AuthenticatedUser
+impl<S> FromRequestParts<S> for AuthenticatedUser 
 where
-    B: Send,
+    S: Send + Sync,
 {
     type Rejection = StatusCode;
 
-    async fn from_request(req: &mut RequestParts<B>) -> Result<Self, Self::Rejection> {
-        let domain = env::var("AUTH0_DOMAIN").map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
-        let audience = env::var("AUTH0_AUDIENCE").map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
+    async fn from_request_parts(
+        parts: &mut Parts,
+        _state: &S,
+    ) -> Result<Self, Self::Rejection> {
+        let domain = env::var("AUTH0_DOMAIN")
+            .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
+        let audience = env::var("AUTH0_AUDIENCE")
+            .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?;
 
-        let headers = req.headers().ok_or(StatusCode::INTERNAL_SERVER_ERROR)?;
-        let auth_header = headers
+        let auth_header = parts
+            .headers
             .get("Authorization")
             .and_then(|v| v.to_str().ok())
             .ok_or(StatusCode::UNAUTHORIZED)?;
@@ -100,7 +103,8 @@ where
             .strip_prefix("Bearer ")
             .ok_or(StatusCode::UNAUTHORIZED)?;
 
-        let header = decode_header(token).map_err(|_| StatusCode::UNAUTHORIZED)?;
+        let header = decode_header(token)
+            .map_err(|_| StatusCode::UNAUTHORIZED)?;
         let kid = header.kid.ok_or(StatusCode::UNAUTHORIZED)?;
 
         let decoding_key = get_decoding_key(&domain, &kid).await?;
@@ -109,8 +113,8 @@ where
         validation.set_audience(&[&audience]);
         validation.set_issuer(&[format!("https://{}/", domain)]);
 
-        let token_data =
-            decode::<Claims>(token, &decoding_key, &validation).map_err(|_| StatusCode::UNAUTHORIZED)?;
+        let token_data = decode::<Claims>(token, &decoding_key, &validation)
+            .map_err(|_| StatusCode::UNAUTHORIZED)?;
 
         Ok(AuthenticatedUser {
             sub: token_data.claims.sub,
