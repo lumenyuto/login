@@ -965,7 +965,6 @@ dependencies = [
  "anyhow",
  "axum",
  "dotenvy",
- "http 1.4.0",
  "http-body 0.4.6",
  "hyper 0.14.32",
  "jsonwebtoken",

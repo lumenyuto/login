@@ -5,7 +5,6 @@ edition = "2024"
 
 [dependencies]
 axum = { version = "0.8", features = ["macros"] }
-http = "1"
 hyper = { version = "0.14.16", features = ["full"] }
 tokio = { version = "1.16.1", features = ["full"]}
 tower = "0.4.11"

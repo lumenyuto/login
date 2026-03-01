@@ -6,10 +6,10 @@ mod repositories;
 use axum::{
     routing::{get, post},
     Router,
+    http::header::{AUTHORIZATION, CONTENT_TYPE},
 };
 use std::net::SocketAddr;
 use std::{env, sync::Arc};
-use http::header::{AUTHORIZATION, CONTENT_TYPE};
 use sqlx::PgPool;
 use tower_http::cors::{Any, CorsLayer};
 use dotenvy::dotenv;
